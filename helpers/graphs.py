@@ -26,3 +26,5 @@ def candlestick_plot(data: np.ndarray):
     fig.tight_layout()
 
     plt.show()
+
+    return plt

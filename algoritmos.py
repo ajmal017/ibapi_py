@@ -7,6 +7,9 @@ from ibapi.order import Order
 from src.ibapy import Ibapy
 from helpers.utils import *
 
+from matplotlib.finance import candlestick2_ohlc
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 class DatosHistoricos(Ibapy):
 
@@ -21,11 +24,6 @@ class DatosHistoricos(Ibapy):
         self.historical_data_req(contract)
 
     def historical_data_end(self, reqId, historical_data, start, end):
-        """
-        def modifier(r):
-            return tuple([int(time.mktime(r[1].timetuple()))] + r[2:6])
-        _historical_data = list(map(modifier, historical_data))
-        """
         graphs.candlestick_plot(historical_data)
 
 
@@ -79,6 +77,33 @@ class KeepUpdatedData(Ibapy):
     def start(self, req_id):
         self.historical_data_req(self.contract, keep_up_to_date=True)
         # self.reqMktData(self.valid_id, self.contract, "", False, False, [])
+        
+    def historical_data_end(self, reqId, historical_data, start, end):
+        self.graph = graphs.candlestick_plot(historical_data)
+
+    def historicalDataUpdate(self, reqId: int, bar):
+        super().historicalDataUpdate(reqId, bar)
+        assert type(data) == np.ndarray, "la data debe ser del tipo numpy.ndarray"
+        fig, ax = plt.subplots()
+        candlestick2_ohlc(ax, data['open'], data['high'], data['low'], data['close'], width=0.6)
+
+        xdate = [datetime.datetime.fromtimestamp(i) for i in data['time']]
+
+        ax.xaxis.set_major_locator(ticker.MaxNLocator(6))
+
+        def mydate(x,pos):
+            try:
+                return xdate[int(x)]
+            except IndexError:
+                return ''
+
+        ax.xaxis.set_major_formatter(ticker.FuncFormatter(mydate))
+
+        fig.autofmt_xdate()
+        fig.tight_layout()
+
+        plt.show()
+
 
 
 class SimpleBuy(Ibapy):
