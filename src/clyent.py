@@ -29,7 +29,7 @@ class Clyent(EClient):
                             contract,
                             end_date_time="",
                             duration="1800 S",
-                            bar_size_setting="10 secs",
+                            bar_size_setting="1 secs",
                             what_to_show="MIDPOINT",
                             keep_up_to_date=False,
                             req_id=None):

@@ -30,21 +30,24 @@ class DatosHistoricos(Ibapy):
 class DatosLive(Ibapy):
 
     contract = Contract()
-    order = Order()
-    price_reference = None
 
     contract.secType = "CASH"
     contract.currency = "USD"
     contract.exchange = "IDEALPRO"
     contract.symbol = "EUR"
 
-    order.orderType = "MKT"
-    order.action = "SELL"
-    order.totalQuantity = 20000
-
-    def program_start(self):
+    def start(self, valid_id):
         self.market_data_req(self.contract)
+        self.historical_data_req(self.contract, keep_up_to_date=True)
 
+    def tickPrice(self, reqId, tickType, price: float,
+                  attrib):
+        if tickType == 1:
+            print("bid price", datetime.datetime.now(), tickType, price)
+
+    def historicalDataUpdate(self, req_id, bar):
+        print(req_id, bar)
+"""
     def tick_updated(self, dataType: str, reqId: int, tickType: int, size: float):
 
         if TickTypeEnum.to_str(tickType) == "ASK":
@@ -65,7 +68,7 @@ class DatosLive(Ibapy):
         self.placeOrder(self.valid_id, self.contract, self.order)
         self.order.action = "SELL" if self.order.action == "BUY" else "SELL"
         self.valid_id += 1
-
+"""
 
 class KeepUpdatedData(Ibapy):
     contract = Contract()
