@@ -1,0 +1,5 @@
+actionid: tox
+msg: packaging
+cmdargs: ['c:\\users\\pc01\\appdata\\local\\programs\\python\\python36\\python.exe', local('C:\\Users\\PC01\\Documents\\IBAPI\\setup.py'), 'sdist', '--formats=zip', '--dist-dir', local('C:\\Users\\PC01\\Documents\\IBAPI\\.tox\\dist')]
+env: None
+

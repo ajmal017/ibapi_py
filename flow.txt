@@ -1,0 +1,22 @@
+Secuencia de ejecución de Program.py
+Configura el parser del comand line
+Inicia app (subclase de client y wrapper)
+    Inicia TestWrapper (subclase del wrapper)
+    Inicia TestClient (subclase de client)
+        Inicia EClient (provee la interfaz para interactuar con el TWS)
+            Crea una cola de mensajes (self.msg_queue)
+        Configura con setupDetectRqId (?)
+Inicia la conexion con app.connect()
+    Envia unos mensajes al TWS para configurar el canal
+    Espera la respuesta del TWS (2 fields => serverVersion y conn_time)
+    Inicia el EReader (Thread receptor de datos)
+        Los datos recibidos los inserta en el Queue
+    Inicia la API (startAPI)
+        Envia un mensaje al TWS con:
+            OUT.START_API = 76
+            VERSION = 2
+            clientID = 0 
+Ejecuta app.run [Bucle]
+    Solicita un item del Queue (text)
+    Lo transforma en un tuple y lo pasa como argumento al decoder.interprete
+        Dependiendo del contenido del mensaje se realiza una acción mapeada con msgId2handleInfo
