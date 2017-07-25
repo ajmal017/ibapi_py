@@ -5,6 +5,8 @@ import datetime as datetime
 from .utils import *
 
 
+
+
 def candlestick_plot(data: np.ndarray):
     assert type(data) == np.ndarray, "la data debe ser del tipo numpy.ndarray"
     fig, ax = plt.subplots()
@@ -27,4 +29,4 @@ def candlestick_plot(data: np.ndarray):
 
     plt.show()
 
-    return plt
+    return fig, ax

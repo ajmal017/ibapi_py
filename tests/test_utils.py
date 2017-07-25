@@ -192,15 +192,15 @@ class TestRequest:
 
 
 class TestResponse:
-    @fixture
-    def ibmock():
+    @pytest.fixture
+    def ibmock(self):
         class IbMock: 
             req_queue = RequestsQueue()
             req_queue.add(1, "emitter", "func", 
-                          lambda: return True)
+                          lambda: True)
             
             @response
-            def func(arg):
+            def func(self, arg):
                 return arg
         
         return IbMock()

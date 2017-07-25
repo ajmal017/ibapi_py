@@ -73,7 +73,12 @@ class CandlesArray:
     def __iter__(self):
         return self.data
 
-    def add_candle(self, tick_datetime, open: int, high: int, low: int, close: int):
+    def add_candle(self, 
+                   tick_datetime,
+                   open: int,
+                   high: int,
+                   low: int,
+                   close: int):
         if type(tick_datetime) == str:
             datetime_ = datetime.datetime.strptime(tick_datetime, "%Y%m%d %H:%M:%S")
             secs = time_to_secs(datetime_)

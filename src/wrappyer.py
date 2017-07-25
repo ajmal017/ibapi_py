@@ -143,10 +143,12 @@ class Wrappyer(EWrapper):
         new_start = self.wr_hist_data[reqId][0]["time"]
         new_end = self.wr_hist_data[reqId][-1]["time"]
 
-        self.historical_data_end(reqId, self.wr_hist_data[reqId], new_start, new_end)
-
-        self.req_queue.process(valid_id=reqId,
+        self.historical_data_end(reqId, self.wr_hist_data[reqId].data, new_start, new_end)
+        try:
+            self.req_queue.process(valid_id=reqId,
                                 target="historicalDataEnd").action()
+        except:
+            pass
 
 
     def get_historical_data(self, req_id=None):
