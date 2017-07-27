@@ -5,11 +5,12 @@ import datetime as datetime
 from .utils import *
 
 
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
 
 
 def candlestick_plot(data: np.ndarray):
     assert type(data) == np.ndarray, "la data debe ser del tipo numpy.ndarray"
-    fig, ax = plt.subplots()
     candlestick2_ohlc(ax, data['open'], data['high'], data['low'], data['close'], width=0.6)
 
     xdate = [datetime.datetime.fromtimestamp(i) for i in data['time']]
@@ -26,7 +27,3 @@ def candlestick_plot(data: np.ndarray):
 
     fig.autofmt_xdate()
     fig.tight_layout()
-
-    plt.show()
-
-    return fig, ax

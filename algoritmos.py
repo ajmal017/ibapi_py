@@ -7,9 +7,6 @@ from ibapi.order import Order
 from src.ibapy import Ibapy
 from helpers.utils import *
 
-from matplotlib.finance import candlestick2_ohlc
-import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 
 class DatosHistoricos(Ibapy):
 

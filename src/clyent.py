@@ -74,8 +74,6 @@ class Clyent(EClient):
             endDateTime = datetime_to_str(end_date_time)
 
         valid_id = req_id if req_id else self.valid_id
-
-        print("keepUpToDate:", keep_up_to_date)
         self.reqHistoricalData(valid_id, contract, end_date_time,
                                duration, bar_size_setting, what_to_show,
                                1, 1, keep_up_to_date, [])

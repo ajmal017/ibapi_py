@@ -1,46 +1,53 @@
-"""
-Show how to make date plots in matplotlib using date tick locators and
-formatters.  See major_minor_demo1.py for more information on
-controlling major and minor ticks
-"""
-
-from __future__ import print_function
-import datetime
+from helpers.utils import historical_data_to_numpy, CandlesArray
+from helpers.graphs import candlestick_plot, fig, ax
+import matplotlib.animation as animation
 import matplotlib.pyplot as plt
-from matplotlib.dates import MONDAY
-from mpl_finance import quotes_historical_yahoo_ochl
-from matplotlib.dates import MonthLocator, WeekdayLocator, DateFormatter
+from matplotlib.finance import candlestick2_ohlc
+from threading import Thread
+from src.ibapy import Ibapy
+from ibapi.contract import Contract
+import datetime
 
 
-date1 = datetime.date(2002, 1, 5)
-date2 = datetime.date(2003, 12, 1)
+data = []
 
-# every monday
-mondays = WeekdayLocator(MONDAY)
+class IbGraph(Ibapy):
+    contract = Contract()
+    contract.secType = "CASH"
+    contract.currency = "USD"
+    contract.exchange = "IDEALPRO"
+    contract.symbol = "EUR"
+    graph_data = CandlesArray()
 
-# every 3rd month
-months = MonthLocator(range(1, 13), bymonthday=1, interval=3)
-monthsFmt = DateFormatter("%b '%y")
+    def start(self, valid_id):
+        id_ = self.historical_data_req(self.contract, keep_up_to_date=True)
+        self.historical_data_init(id_)
+        self.graph_data = self.wr_hist_data[id_]
+
+    def historicalDataUpdate(self, reqId: int, bar):
+        self.wr_hist_data[reqId].add_candle(datetime.datetime.now(),
+                                            bar.open,
+                                            bar.high,
+                                            bar.low,
+                                            bar.close)
+        global data
+        data = self.wr_hist_data[reqId].data
 
 
-quotes = quotes_historical_yahoo_ochl('INTC', date1, date2)
-if len(quotes) == 0:
-    print('Found no quotes')
-    raise SystemExit
+def thread1():
+    global data
+    ibg = IbGraph()
+    ibg.go()
 
-dates = [q[0] for q in quotes]
-opens = [q[1] for q in quotes]
+thread = Thread(target=thread1)
+thread.start()
 
-fig, ax = plt.subplots()
-ax.plot_date(dates, opens, '-')
-ax.xaxis.set_major_locator(months)
-ax.xaxis.set_major_formatter(monthsFmt)
-ax.xaxis.set_minor_locator(mondays)
-ax.autoscale_view()
-#ax.xaxis.grid(False, 'major')
-#ax.xaxis.grid(True, 'minor')
-ax.grid(True)
 
-fig.autofmt_xdate()
+def func(i):
+    if len(data) > 10:
+        print(data)
+        ax.clear()
+        candlestick_plot(data[-50:])
 
+ani = animation.FuncAnimation(fig, func, interval=100)
 plt.show()

@@ -7,7 +7,6 @@ sys.path.append(os.getcwd())
 setup(
     setup_requires=[
         'pytest',
-        'pytest-runner',
         'matplotlib',
         'numpy',
     ],
