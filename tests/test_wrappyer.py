@@ -120,3 +120,24 @@ def test_nextValidId(monkeypatch):
 
     wrappyer.nextValidId(123)
     assert wrappyer.args == 123
+
+
+def test_historical_data_update():
+    from ibapi.common import BarData
+    bar = fill_bar(
+        '20120102 00:00:00',
+        22.0, 42.0, 12.0,
+        32.0, 62, 72, 82.0
+    )
+
+    wrappyer = Wrappyer()
+    wrappyer.historical_data_init(0)
+
+    wrappyer.historicalDataUpdate(0, bar)
+
+    assert len(wrappyer.get_historical_data(0)) == 1
+    test_carray = CandlesArray()
+    test_carray.add_candle(*unpack_bar(bar))
+    assert (wrappyer.wr_hist_data[0] ==
+            test_carray)
+    assert

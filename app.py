@@ -17,7 +17,7 @@ inp = input(
     "Ud. seleccionó: ")
 """
 
-inp = "6"
+inp = "1"
 
 if inp == "1":
     DatosLive().go()
