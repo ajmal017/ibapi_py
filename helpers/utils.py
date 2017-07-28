@@ -1,6 +1,7 @@
 import time
 import datetime
 import inspect
+from ibapi.common import BarData
 import numpy as np
 
 
@@ -232,3 +233,34 @@ def datetime_to_str(dt: datetime.datetime):
 
 def str_to_datetime(dt_str: str):
     return datetime.datetime.strptime(dt_str, format_)
+
+def to_datetime(date):
+    if type(date) == datetime.datetime:
+        pass
+
+
+def fill_bar(date, open_, high, low, close,
+             volume, bar_count, average):
+    bar = BarData()
+    bar.date = date
+    bar.open = open_
+    bar.high = high
+    bar.low = low
+    bar.close = close
+    bar.volume = volume
+    bar.barCount = bar_count
+    bar.average = average
+    return bar
+
+
+def unpack_bar(bar) -> tuple:
+    return (
+        bar.date,
+        bar.open,
+        bar.high,
+        bar.low,
+        bar.close,
+        bar.volume,
+        bar.barCount,
+        bar.average
+    )

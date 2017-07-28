@@ -1,17 +1,16 @@
 # Ignore logs
 log/**
+
 # Ignore virtual enviroment
 bin/**
 lib/**
 lib64/**
 share/**
-# Ignore IDE setup
-.idea/**
-.vscode/**
-exec_app
+
 #ignore cache
 cache/**
 __pycache__/**
+
 #otros
 pip-selfcheck.json
 

@@ -65,6 +65,7 @@ def func(i):
     """
     ax.clear()
     ax.plot(mkt_data_time[-20:], bid_price[-20:])
+    ax.plot(mkt_data_time[-20:], ask_price[-20:])
 
 
 ani = animation.FuncAnimation(fig, func, interval=500)

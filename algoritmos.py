@@ -34,8 +34,9 @@ class DatosLive(Ibapy):
     contract.symbol = "EUR"
 
     def start(self, valid_id):
+        print("market data")
         self.market_data_req(self.contract)
-        self.historical_data_req(self.contract, keep_up_to_date=True)
+        # self.historical_data_req(self.contract, keep_up_to_date=True)
 
     def tickPrice(self, reqId, tickType, price: float,
                   attrib):
@@ -75,9 +76,9 @@ class KeepUpdatedData(Ibapy):
     contract.symbol = "EUR"
 
     def start(self, req_id):
-        self.historical_data_req(self.contract, keep_up_to_date=True)
-        # self.reqMktData(self.valid_id, self.contract, "", False, False, [])
-        
+        #self.historical_data_req(self.contract, keep_up_to_date=True)
+        self.reqMktData(self.valid_id, self.contract, "", False, False, [])
+
     def historical_data_end(self, reqId, historical_data, start, end):
         self.graph = graphs.candlestick_plot(historical_data)
 
