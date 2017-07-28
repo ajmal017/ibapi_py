@@ -5,7 +5,7 @@ import logging
 from algoritmos import *
 
 
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.INFO)
 # logging.disable(logging.ERROR)
 
 """
@@ -17,7 +17,7 @@ inp = input(
     "Ud. seleccionó: ")
 """
 
-inp = "6"
+inp = "1"
 
 if inp == "1":
     DatosLive().go()
