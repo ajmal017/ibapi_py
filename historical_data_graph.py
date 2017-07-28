@@ -1,15 +1,16 @@
-from helpers.utils import historical_data_to_numpy, CandlesArray
+import datetime
+import numpy as np
+from helpers.utils import CandlesArray
 from helpers.graphs import candlestick_plot, fig, ax
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
-from matplotlib.finance import candlestick2_ohlc
 from threading import Thread
 from src.ibapy import Ibapy
 from ibapi.contract import Contract
-import datetime
 
 
-data = []
+data = np.array([])
+
 
 class IbGraph(Ibapy):
     contract = Contract()

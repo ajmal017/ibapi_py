@@ -15,6 +15,7 @@ mkt_data_time = []
 fig, ax = plt.subplots()
 ln, = plt.plot(mkt_data_time, bid_price, 'ro', animated=True)
 
+
 class IbGraph(Ibapy):
     contract = Contract()
     contract.secType = "CASH"
@@ -64,8 +65,9 @@ def func(i):
     ln.set_data([0,1,2,3], [0,1,2,3])
     """
     ax.clear()
-    ax.plot(mkt_data_time[-20:], bid_price[-20:])
-    ax.plot(mkt_data_time[-20:], ask_price[-20:])
+    ax.plot(mkt_data_time[-50:], bid_price[-50:], label="bid")
+    ax.plot(mkt_data_time[-50:], ask_price[-50:], label="ask")
+    plt.legend()
 
 
 ani = animation.FuncAnimation(fig, func, interval=500)

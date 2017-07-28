@@ -36,8 +36,8 @@ class Clyent(EClient):
         """
         Solicita al TWS el envío de todos los ticks en un período determinado de tiempo a un
         ancho de barra determinado.
-        S	Seconds
-        durationString válidos:
+        duration válidos:
+            S	Seconds
             D	Day
             W	Week
             M	Month
@@ -71,7 +71,7 @@ class Clyent(EClient):
         :return:
         """
         if type(end_date_time) == datetime.datetime:
-            endDateTime = datetime_to_str(end_date_time)
+            end_date_time = datetime_to_str(end_date_time)
 
         valid_id = req_id if req_id else self.valid_id
         self.reqHistoricalData(valid_id, contract, end_date_time,

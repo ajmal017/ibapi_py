@@ -208,7 +208,6 @@ class RequestsQueue:
 
     def process(self, valid_id=None, emitter=None, target=None) -> Future:
         index_and_future = self.find(valid_id, emitter, target, get_indexes=True)
-
         try:
             index, future = index_and_future[0]
         except IndexError:

@@ -1,5 +1,4 @@
 import pytest
-import time
 from helpers.utils import *
 
 
@@ -196,7 +195,7 @@ class TestResponse:
     def ibmock(self):
         class IbMock: 
             req_queue = RequestsQueue()
-            req_queue.add(1, "emitter", "func", 
+            req_queue.add(12, "emitter", "func",
                           lambda: True)
             
             @response
@@ -207,7 +206,7 @@ class TestResponse:
 
     def test_removes_item_from_queue(self, ibmock):
         assert ibmock.func(12) == 12
-        assert req_queue
+        assert len(ibmock.req_queue) == 0
 
 
 def test_to_datetime():
