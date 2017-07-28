@@ -140,4 +140,31 @@ def test_historical_data_update():
     test_carray.add_candle(*unpack_bar(bar))
     assert (wrappyer.wr_hist_data[0] ==
             test_carray)
-    assert
+
+    # Asegurar que si el ultimo datetime se repite,
+    # se sustituye el ultimo elemento de la lista
+    bar = fill_bar(
+        '20120102 00:00:00',
+        12.0, 32.0, 02.0,
+        22.0, 52, 62, 72.0
+    )
+
+    assert len(wrappyer.get_historical_data(0)) == 1
+    test_carray = CandlesArray()
+    test_carray.add_candle(*unpack_bar(bar))
+    assert (wrappyer.wr_hist_data[0] ==
+            test_carray)
+
+    # Si el datetime cambia, el elemento sera
+    # agregado como nuevo
+    bar = fill_bar(
+        '20120102 00:00:01',
+        22.0, 42.0, 12.0,
+        32.0, 62, 72, 82.0
+    )
+
+    assert len(wrappyer.get_historical_data(0)) == 2
+    test_carray = CandlesArray()
+    test_carray.add_candle(*unpack_bar(bar))
+    assert (wrappyer.wr_hist_data[1] ==
+            test_carray)

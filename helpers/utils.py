@@ -33,7 +33,7 @@ def response(original_function):
             q.process(valid_id=req_id, target=original_function.__name__)
 
         process_queue(self.req_queue)
-        return original_function(self, *args, **kwargs)
+        return original_function(self, req_id, *args, **kwargs)
     return new_function
 
 __historical_data_structure = [('time', '<i4'), ('open', '<f4'), ('high', '<f4'), ('low', '<f4'), ('close', '<f4')]
@@ -50,10 +50,6 @@ def historical_data_to_numpy(data: list):
         data,
         dtype=__historical_data_structure)
     return quotes
-
-
-def time_to_secs(_time_):
-    return int(time.mktime(_time_.timetuple()))
 
 
 class CandlesArray:
@@ -224,23 +220,35 @@ class RequestsQueue:
         return future
 
 
-format_ = "%Y%m%d %H:%M:%S"
+_format = "%Y%m%d %H:%M:%S"
 
 
 def datetime_to_str(dt: datetime.datetime):
-    return dt.strftime(format_)
+    return dt.strftime(_format)
 
 
 def str_to_datetime(dt_str: str):
-    return datetime.datetime.strptime(dt_str, format_)
+    return datetime.datetime.strptime(dt_str, _format)
+
 
 def to_datetime(date):
     if type(date) == datetime.datetime:
-        pass
+        dt = date
+    elif type(date) == int:
+        dt = datetime.datetime.fromtimestamp(date)
+    elif type(date) == str:
+        dt = str_to_datetime(date)
+    else:
+        raise TypeError("{} not supported.".format(type(date)))
+    return dt
+
+
+def time_to_secs(dt: datetime.datetime) -> int:
+    return int(time.mktime(dt.timetuple()))
 
 
 def fill_bar(date, open_, high, low, close,
-             volume, bar_count, average):
+             volume=-1, bar_count=-1, average=-1):
     bar = BarData()
     bar.date = date
     bar.open = open_
@@ -253,14 +261,27 @@ def fill_bar(date, open_, high, low, close,
     return bar
 
 
-def unpack_bar(bar) -> tuple:
-    return (
-        bar.date,
-        bar.open,
-        bar.high,
-        bar.low,
-        bar.close,
-        bar.volume,
-        bar.barCount,
-        bar.average
-    )
+def unpack_bar(bar, mode="") -> tuple:
+    if mode == "ohlc":
+        unpacked = (
+            bar.date,
+            bar.open,
+            bar.high,
+            bar.low,
+            bar.close,
+            bar.volume,
+            bar.barCount,
+            bar.average
+        )
+    else:
+        unpacked = (
+            bar.date,
+            bar.open,
+            bar.high,
+            bar.low,
+            bar.close,
+            bar.volume,
+            bar.barCount,
+            bar.average
+        )
+    return unpacked

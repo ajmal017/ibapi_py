@@ -38,10 +38,11 @@ class DatosLive(Ibapy):
         self.market_data_req(self.contract)
         # self.historical_data_req(self.contract, keep_up_to_date=True)
 
-    def tickPrice(self, reqId, tickType, price: float,
-                  attrib):
+    def tick_updated(self, dataType: str, reqId, tickType, value):
         if tickType == 1:
-            print("bid price", datetime.datetime.now(), tickType, price)
+            print("bid price", datetime.datetime.now(), tickType, value)
+        elif tickType == 2:
+            print("ask price", datetime.datetime.now(), tickType, value)
 
     def historicalDataUpdate(self, req_id, bar):
         print(req_id, bar)

@@ -5,7 +5,7 @@ import logging
 from algoritmos import *
 
 
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.INFO)
 # logging.disable(logging.ERROR)
 
 """

@@ -207,10 +207,14 @@ class TestResponse:
 
     def test_removes_item_from_queue(self, ibmock):
         assert ibmock.func(12) == 12
+        assert req_queue
 
 
 def test_to_datetime():
     test_date = datetime.datetime(
-        
+        2000, 1, 1, 10, 10, 10
     )
-    assert to_datetime("")
+
+    assert to_datetime("20000101 10:10:10") == test_date
+    assert to_datetime(946735810) == test_date
+    assert to_datetime(test_date) == test_date
