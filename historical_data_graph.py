@@ -45,9 +45,8 @@ thread.start()
 
 def func(i):
     if len(data) > 10:
-        print(data)
         ax.clear()
         candlestick_plot(data[-50:])
 
-ani = animation.FuncAnimation(fig, func, interval=100)
+ani = animation.FuncAnimation(fig, func, interval=500)
 plt.show()

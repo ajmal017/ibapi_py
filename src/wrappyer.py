@@ -150,6 +150,14 @@ class Wrappyer(EWrapper):
         except:
             pass
 
+    def historicalDataUpdate(self, reqId: int, bar: BarData):
+        super().historicalDataUpdate(reqId, bar)
+        if bar.date: pass
+        self.wr_hist_data[reqId].add_candle(bar.date,
+                                            bar.open,
+                                            bar.high,
+                                            bar.low,
+                                            bar.close)
 
     def get_historical_data(self, req_id=None):
         if req_id is None:
