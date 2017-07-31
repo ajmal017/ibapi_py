@@ -30,7 +30,10 @@ def response(original_function):
     def new_function(self, req_id: int, *args, **kwargs):
 
         def process_queue(q: RequestsQueue):
-            q.process(valid_id=req_id, target=original_function.__name__)
+            try:
+                q.process(valid_id=req_id, target=original_function.__name__).action()
+            except:
+                pass
 
         process_queue(self.req_queue)
         return original_function(self, req_id, *args, **kwargs)
@@ -222,12 +225,18 @@ class RequestsQueue:
 _format = "%Y%m%d %H:%M:%S"
 
 
-def datetime_to_str(dt: datetime.datetime):
+def datetime_to_str(dt: datetime.datetime) -> str:
     return dt.strftime(_format)
 
 
-def str_to_datetime(dt_str: str):
+def str_to_datetime(dt_str: str) -> datetime.datetime:
     return datetime.datetime.strptime(dt_str, _format)
+
+
+def str_datetime_to_int(dt_str:str) -> int:
+    datetime_ = datetime.datetime.strptime(dt_str, _format)
+    secs = time_to_secs(datetime_)
+    return secs
 
 
 def to_datetime(date):
@@ -237,6 +246,8 @@ def to_datetime(date):
         dt = datetime.datetime.fromtimestamp(date)
     elif type(date) == str:
         dt = str_to_datetime(date)
+    elif type(date) == np.int32:
+        dt = datetime.datetime.fromtimestamp(int(date))
     else:
         raise TypeError("{} not supported.".format(type(date)))
     return dt
@@ -260,8 +271,16 @@ def fill_bar(date, open_, high, low, close,
     return bar
 
 
-def unpack_bar(bar, mode="") -> tuple:
+def unpack_bar(bar, mode="ohlc") -> tuple:
     if mode == "ohlc":
+        unpacked = (
+            bar.date,
+            bar.open,
+            bar.high,
+            bar.low,
+            bar.close,
+        )
+    elif mode == "full":
         unpacked = (
             bar.date,
             bar.open,
@@ -273,14 +292,5 @@ def unpack_bar(bar, mode="") -> tuple:
             bar.average
         )
     else:
-        unpacked = (
-            bar.date,
-            bar.open,
-            bar.high,
-            bar.low,
-            bar.close,
-            bar.volume,
-            bar.barCount,
-            bar.average
-        )
+        raise ValueError
     return unpacked

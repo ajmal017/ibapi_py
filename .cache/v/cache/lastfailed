@@ -1,1 +1,3 @@
-{}
+{
+  "tests/test_ibapy.py::test_watch_product": true
+}

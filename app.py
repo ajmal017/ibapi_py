@@ -17,7 +17,7 @@ inp = input(
     "Ud. seleccionó: ")
 """
 
-inp = "1"
+inp = "6"
 
 if inp == "1":
     DatosLive().go()
@@ -30,6 +30,6 @@ elif inp == "4":
 elif inp == "5":
     ContinousData().go()
 elif inp == "6":
-    KeepUpdatedData().go()
+    KeepDataUpdated().go()
 else:
     print("Opción inválida")

@@ -46,30 +46,9 @@ class DatosLive(Ibapy):
 
     def historicalDataUpdate(self, req_id, bar):
         print(req_id, bar)
-"""
-    def tick_updated(self, dataType: str, reqId: int, tickType: int, size: float):
 
-        if TickTypeEnum.to_str(tickType) == "ASK":
-            print(TickTypeEnum.to_str(tickType), tickType, size)
-            if self.price_reference is None:
-                self.price_reference = size
-                print("reference price:", self.price_reference)
-                return
-            if size > self.price_reference + 0.00002:
-                if self.order.action == "SELL":
-                    self.make_order()
-            elif size < self.price_reference - 0.00002:
-                if self.order.action == "BUY":
-                    self.make_order()
 
-    def make_order(self):
-
-        self.placeOrder(self.valid_id, self.contract, self.order)
-        self.order.action = "SELL" if self.order.action == "BUY" else "SELL"
-        self.valid_id += 1
-"""
-
-class KeepUpdatedData(Ibapy):
+class KeepDataUpdated(Ibapy):
     contract = Contract()
     contract.secType = "CASH"
     contract.currency = "USD"
@@ -77,15 +56,14 @@ class KeepUpdatedData(Ibapy):
     contract.symbol = "EUR"
 
     def start(self, req_id):
-        #self.historical_data_req(self.contract, keep_up_to_date=True)
-        self.reqMktData(self.valid_id, self.contract, "", False, False, [])
+        self.historical_data_req(self.contract,
+                                 bar_size_setting="5 mins",
+                                 duration="1 D",
+                                 keep_up_to_date=True)
 
-    def historical_data_end(self, reqId, historical_data, start, end):
-        self.graph = graphs.candlestick_plot(historical_data)
-
-    def historicalDataUpdate(self, reqId: int, bar):
-        print(bar)
-
+    def historical_data_updated(self, req_id, data: CandlesArray):
+        print(data.high(0))
+        print()
 
 
 class SimpleBuy(Ibapy):

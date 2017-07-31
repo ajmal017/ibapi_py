@@ -47,6 +47,13 @@ class Ibapy(Clyent, Wrappyer):
 
         valid_id = self.historical_data_req(contract)
         self.req_queue.add(valid_id,
-                           "watch_product",
+                           "tick_updated",
                            "historicalDataEnd",
                            lambda: req_mkt_data(self, valid_id, contract))
+
+    @virtual
+    def large_historical_data_end(self):
+        pass
+
+    def large_historical_data_req(self, contract):
+        self.req_queue.add(valid_id=self.valid_id, target="")

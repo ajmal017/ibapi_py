@@ -123,48 +123,60 @@ def test_nextValidId(monkeypatch):
 
 
 def test_historical_data_update():
-    from ibapi.common import BarData
-    bar = fill_bar(
-        '20120102 00:00:00',
-        22.0, 42.0, 12.0,
-        32.0, 62, 72, 82.0
-    )
+    """
+    La prueba consiste en simular la llegada de una nueva barra
+    a través de historicalDataUpdated.
 
+    Debido a que historicalDataUpdated retorna unidades de fecha repetidas
+    (fiel a la premisa de que el ancho de la barra es fijo)
+    si ocurre alguna actualizacion de barra en un espacio de tiempo menor al
+    establecido como mínimo, enviará una vela de fecha repetida pero con datos
+    más recientes.
+
+    Esta prueba pretende asegurar que si la fecha es repetida, la nueva barra
+    no se adicione sino que sustituya la ultima vela.
+    """
     wrappyer = Wrappyer()
     wrappyer.historical_data_init(0)
 
-    wrappyer.historicalDataUpdate(0, bar)
-
-    assert len(wrappyer.get_historical_data(0)) == 1
-    test_carray = CandlesArray()
-    test_carray.add_candle(*unpack_bar(bar))
-    assert (wrappyer.wr_hist_data[0] ==
-            test_carray)
-
-    # Asegurar que si el ultimo datetime se repite,
-    # se sustituye el ultimo elemento de la lista
-    bar = fill_bar(
-        '20120102 00:00:00',
-        12.0, 32.0, 02.0,
-        22.0, 52, 62, 72.0
-    )
-
-    assert len(wrappyer.get_historical_data(0)) == 1
-    test_carray = CandlesArray()
-    test_carray.add_candle(*unpack_bar(bar))
-    assert (wrappyer.wr_hist_data[0] ==
-            test_carray)
-
-    # Si el datetime cambia, el elemento sera
-    # agregado como nuevo
     bar = fill_bar(
         '20120102 00:00:01',
         22.0, 42.0, 12.0,
         32.0, 62, 72, 82.0
     )
+    wrappyer.historicalDataUpdate(0, bar)
+
+    assert len(wrappyer.get_historical_data(0)) == 1
+    test_carray = CandlesArray()
+    test_carray.add_candle(*unpack_bar(bar))
+    assert (wrappyer.get_historical_data(0)[-1] ==
+            test_carray[-1])
+
+    # Asegurar que si el ultimo datetime se repite,
+    # se sustituye el ultimo elemento de la lista
+    bar = fill_bar(
+        '20120102 00:00:02',
+        12.0, 32.0, 02.0,
+        22.0, 52, 62, 72.0
+    )
+    wrappyer.historicalDataUpdate(0, bar)
+
+    assert len(wrappyer.get_historical_data(0)) == 2
+    test_carray.add_candle(*unpack_bar(bar))
+    assert (wrappyer.get_historical_data(0) ==
+            test_carray)
+
+    # Si el datetime cambia, el elemento sera
+    # agregado como nuevo
+    bar = fill_bar(
+        '20120102 00:00:02',
+        22.0, 42.0, 12.0,
+        32.0, 62, 72, 82.0
+    )
+    wrappyer.historicalDataUpdate(0, bar)
 
     assert len(wrappyer.get_historical_data(0)) == 2
     test_carray = CandlesArray()
     test_carray.add_candle(*unpack_bar(bar))
-    assert (wrappyer.wr_hist_data[1] ==
-            test_carray)
+    assert (wrappyer.get_historical_data(0)[-1] ==
+            test_carray[-1])

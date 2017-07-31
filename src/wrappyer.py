@@ -67,6 +67,9 @@ class Wrappyer(EWrapper):
         """
         pass
 
+    def historical_data_updated(self, req_id, data):
+        pass
+
     def nextValidId(self, orderId: int):
         """
         (revisar)
@@ -88,7 +91,7 @@ class Wrappyer(EWrapper):
             self.wr_ticks[reqId] = {}
         self.wr_ticks[reqId][tickType] = size
         args = ["size", reqId, tickType, size]
-        self.tick_updated(*args)
+        self.tickUpdated(*args)
 
     def tickPrice(self, reqId: TickerId , tickType: TickType, price: float,
                   attrib: TickAttrib):
@@ -97,6 +100,10 @@ class Wrappyer(EWrapper):
             self.wr_ticks[reqId] = {}
         self.wr_ticks[reqId][tickType] = price
         args = ["price", reqId, tickType, price]
+        self.tickUpdated(*args)
+
+    @response
+    def tickUpdated(self, *args):
         self.tick_updated(*args)
 
     def tickSnapshotEnd(self, reqId:int):
@@ -119,6 +126,7 @@ class Wrappyer(EWrapper):
     def historical_data_init(self, req_id):
         self.wr_hist_data[req_id] = CandlesArray()
 
+    @response
     def historicalData(self, req_id: TickerId , bar_data: BarData):
         super().historicalData(req_id, bar_data)
         date = datetime.datetime.strptime(bar_data.date, "%Y%m%d %H:%M:%S")
@@ -132,6 +140,7 @@ class Wrappyer(EWrapper):
             bar_data.low, bar_data.close)
         self.historical_data(req_id, bar_data)
 
+    @response
     def historicalDataEnd(self, reqId: int, start: str, end: str):
         """
         start y end no funcionan correctamente.
@@ -151,13 +160,41 @@ class Wrappyer(EWrapper):
             pass
 
     def historicalDataUpdate(self, reqId: int, bar: BarData):
+        """
+        Si la barra recibida es de fecha repetida,
+        sustituir la vela vieja por la nueva.
+        :param reqId: valid_id
+        :param bar: vela
+        :return:
+        """
         super().historicalDataUpdate(reqId, bar)
-        if bar.date: pass
-        self.wr_hist_data[reqId].add_candle(bar.date,
-                                            bar.open,
-                                            bar.high,
-                                            bar.low,
-                                            bar.close)
+        if len(self.wr_hist_data[reqId]) == 0:
+            """
+            Estado inicial vacio, aun no hay data.
+            """
+            self.wr_hist_data[reqId].add_candle(
+                *unpack_bar(bar)
+            )
+        elif (to_datetime(bar.date) ==
+                to_datetime(self.wr_hist_data[reqId][-1]["time"])):
+            self.wr_hist_data[reqId].data = \
+                np.append(
+                    self.wr_hist_data[reqId][:-1],
+                    historical_data_to_numpy(
+                        [(str_datetime_to_int(bar.date),
+                          bar.open,
+                          bar.high,
+                          bar.low,
+                          bar.close)]
+                    )
+                )
+        else:
+            self.wr_hist_data[reqId].add_candle(bar.date,
+                                                bar.open,
+                                                bar.high,
+                                                bar.low,
+                                                bar.close)
+        self.historical_data_updated(reqId, self.wr_hist_data[reqId])
 
     def get_historical_data(self, req_id=None):
         if req_id is None:
